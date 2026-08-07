@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { QianwenCliProvider } from './providers/qianwen-cli';
 import { MockProvider } from './providers/mock';
 import { DeepSeekProvider } from './providers/deepseek';
+import { CodeBuddyProvider } from './providers/codebuddy';
 import { createUsageRouter } from './routes/usage';
 import { ProviderError } from './models';
 import { UsageProvider } from './providers';
@@ -61,15 +62,19 @@ async function chooseQianwenProvider(): Promise<{ provider: UsageProvider; sourc
 async function main() {
   const { provider: qianwen, source } = await chooseQianwenProvider();
   const deepseek = new DeepSeekProvider();
+  const codebuddy = new CodeBuddyProvider();
   console.log(`[TokenLens] 千问数据源: ${source === 'cli' ? 'CLI(真实)' : 'Mock(演示)'}`);
   console.log(
     `[TokenLens] DeepSeek: ${process.env.DEEPSEEK_API_KEY ? '已配置 API Key' : '未配置 DEEPSEEK_API_KEY'}`,
+  );
+  console.log(
+    `[TokenLens] CodeBuddy: ${process.env.CODEBUDDY_API_BASE ?? 'http://127.0.0.1:8080'}`,
   );
 
   const app = express();
   app.use(cors());
   app.use(express.json());
-  app.use('/api', createUsageRouter({ qianwen, deepseek }));
+  app.use('/api', createUsageRouter({ qianwen, deepseek, codebuddy }));
   app.listen(PORT, () => console.log(`TokenLens backend on http://localhost:${PORT}`));
 }
 

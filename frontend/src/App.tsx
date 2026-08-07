@@ -6,7 +6,7 @@ import { StatusBar } from './components/StatusBar';
 import { SourceSwitch } from './components/SourceSwitch';
 import './App.css';
 
-const INTERVAL_MS = 5000;
+const INTERVAL_MS = 30_000;
 
 export default function App() {
   useUsage(INTERVAL_MS);

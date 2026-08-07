@@ -5,10 +5,16 @@ import { createUsageRouter } from '../../src/routes/usage';
 import { ProviderError } from '../../src/models';
 import { DeepSeekProvider } from '../../src/providers/deepseek';
 
-function makeApp(providers: { qianwen: any; deepseek: any }) {
+function makeApp(providers: { qianwen: any; deepseek: any; codebuddy?: any }) {
   const app = express();
   app.use(express.json());
-  app.use('/api', createUsageRouter(providers));
+  app.use(
+    '/api',
+    createUsageRouter({
+      codebuddy: providers.codebuddy ?? { name: 'codebuddy', teamUsage: vi.fn(), ...emptyFns },
+      ...providers,
+    }),
+  );
   return app;
 }
 
@@ -80,5 +86,30 @@ describe('usage route', () => {
     const res = await request(makeApp({ qianwen, deepseek })).get('/api/usage?source=deepseek');
     expect(res.status).toBe(401);
     expect(res.body.kind).toBe('auth');
+  });
+
+  it('routes source=codebuddy to CodeBuddy provider', async () => {
+    const qianwen = { name: 'mock', teamUsage: vi.fn(), ...emptyFns };
+    const deepseek = { name: 'deepseek', teamUsage: vi.fn(), ...emptyFns };
+    const codebuddy = {
+      name: 'codebuddy',
+      teamUsage: vi.fn().mockResolvedValue({
+        totalCredits: 1800,
+        remainingCredits: 0,
+        usedPct: 0,
+        todayCredits: 0,
+        generation: 1,
+        activeDays: 12,
+        currentStreak: 3,
+      }),
+      ...emptyFns,
+    };
+    const res = await request(makeApp({ qianwen, deepseek, codebuddy })).get(
+      '/api/usage?source=codebuddy',
+    );
+    expect(res.status).toBe(200);
+    expect(res.body.source).toBe('codebuddy');
+    expect(res.body.data.team.totalCredits).toBe(1800);
+    expect(res.body.data.team.activeDays).toBe(12);
   });
 });

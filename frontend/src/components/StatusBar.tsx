@@ -7,8 +7,17 @@ export function StatusBar() {
   const updated = useUsageStore((s) => s.lastUpdated);
 
   const sourceLabel =
-    source === 'cli' ? 'CLI' : source === 'mock' ? 'Mock' : source === 'deepseek' ? 'DeepSeek' : '—';
-  const sourceClass = source === 'cli' || source === 'deepseek' ? 'tag' : 'tag tag-muted';
+    source === 'cli'
+      ? 'CLI'
+      : source === 'mock'
+        ? 'Mock'
+        : source === 'deepseek'
+          ? 'DeepSeek'
+          : source === 'codebuddy'
+            ? 'CodeBuddy'
+            : '—';
+  const sourceClass =
+    source === 'cli' || source === 'deepseek' || source === 'codebuddy' ? 'tag' : 'tag tag-muted';
 
   return (
     <div className="statusbar">

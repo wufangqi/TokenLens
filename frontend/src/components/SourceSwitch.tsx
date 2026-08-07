@@ -4,6 +4,7 @@ import type { SourceQuery } from '../types';
 const OPTIONS: { id: SourceQuery; label: string }[] = [
   { id: 'qianwen', label: '千问' },
   { id: 'deepseek', label: 'DeepSeek' },
+  { id: 'codebuddy', label: 'CodeBuddy' },
 ];
 
 export function SourceSwitch() {

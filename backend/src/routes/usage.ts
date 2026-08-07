@@ -5,10 +5,13 @@ import { ProviderError } from '../models';
 export interface UsageProviderMap {
   qianwen: UsageProvider;
   deepseek: UsageProvider;
+  codebuddy: UsageProvider;
 }
 
 function resolveSource(raw: unknown): UsageSourceQuery {
-  return raw === 'deepseek' ? 'deepseek' : 'qianwen';
+  if (raw === 'deepseek') return 'deepseek';
+  if (raw === 'codebuddy') return 'codebuddy';
+  return 'qianwen';
 }
 
 export function createUsageRouter(providers: UsageProviderMap): Router {
@@ -28,7 +31,8 @@ export function createUsageRouter(providers: UsageProviderMap): Router {
       if (teamR.status === 'rejected') {
         const e = teamR.reason;
         if (e instanceof ProviderError) {
-          res.status(e.kind === 'auth' ? 401 : 502).json({ error: e.message, kind: e.kind });
+          const status = e.kind === 'auth' ? 401 : e.kind === 'cli-missing' ? 503 : 502;
+          res.status(status).json({ error: e.message, kind: e.kind });
           return;
         }
         res.status(500).json({ error: '内部错误', kind: 'unknown' });
@@ -57,7 +61,8 @@ export function createUsageRouter(providers: UsageProviderMap): Router {
       });
     } catch (e) {
       if (e instanceof ProviderError) {
-        res.status(e.kind === 'auth' ? 401 : 502).json({ error: e.message, kind: e.kind });
+        const status = e.kind === 'auth' ? 401 : e.kind === 'cli-missing' ? 503 : 502;
+        res.status(status).json({ error: e.message, kind: e.kind });
       } else {
         res.status(500).json({ error: '内部错误', kind: 'unknown' });
       }

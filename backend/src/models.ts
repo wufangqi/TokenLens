@@ -10,6 +10,9 @@ export interface TeamUsage {
   currency?: string; // 如 "CNY"
   grantedBalance?: number; // DeepSeek 赠送余额
   toppedUpBalance?: number; // DeepSeek 充值余额
+  // CodeBuddy 本地统计
+  activeDays?: number;
+  currentStreak?: number;
 }
 
 export interface ConsumptionRow {

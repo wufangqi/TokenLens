@@ -26,13 +26,14 @@ TokenLens 是一款轻量、隐私优先的桌面应用(macOS / Windows / Linux)
 
 ## 🚀 快速开始
 
-> 🚧 *Web 端 MVP 开发中。当前为前端 + 本地 Node 后端（千问 CLI / DeepSeek 余额）。*
+> 🚧 *Web 端 MVP 开发中。当前为前端 + 本地 Node 后端（千问 CLI / DeepSeek 余额 / CodeBuddy 本地统计）。*
 
 ### 环境要求
 
 - [Node.js](https://nodejs.org/)(LTS)
 - 可选：全局安装 [`@qianwenai/qianwen-cli`](https://www.npmjs.com/package/@qianwenai/qianwen-cli) 并 `qianwen auth login`（千问真实用量）
 - 可选：设置 `DEEPSEEK_API_KEY`（DeepSeek 余额）
+- 可选：启动 [CodeBuddy CLI HTTP API](https://www.codebuddy.cn/docs/cli/http-api)（默认 `127.0.0.1:8080`，看板切到 CodeBuddy）
 
 ### 安装与运行
 
@@ -50,7 +51,7 @@ npm run dev   # http://localhost:5174
 cd frontend && npm install && npm run dev   # http://localhost:5173
 ```
 
-看板顶栏可切换 **千问** / **DeepSeek**。DeepSeek 官方目前仅开放余额 API，无按模型用量接口。
+看板顶栏可切换 **千问** / **DeepSeek** / **CodeBuddy**。DeepSeek 仅余额；CodeBuddy 读取本机 CLI `GET /api/v1/stats`（需服务已启动）。
 
 ## 🗂️ 项目结构
 

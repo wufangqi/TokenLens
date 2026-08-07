@@ -13,21 +13,33 @@ export function OverviewCards() {
   if (!team) return null;
 
   const isDeepSeek = source === 'deepseek' || sourceQuery === 'deepseek';
+  const isCodeBuddy = source === 'codebuddy' || sourceQuery === 'codebuddy';
+
   const cards = isDeepSeek
     ? [
         { label: '可用余额', value: currency(team.balanceAmount, team.currency), suffix: '' },
         { label: '赠送余额', value: currency(team.grantedBalance, team.currency), suffix: '' },
         { label: '充值余额', value: currency(team.toppedUpBalance, team.currency), suffix: '' },
       ]
-    : [
-        { label: '当月账单', value: currency(team.billAmount, team.currency), suffix: '' },
-        { label: '可用余额', value: currency(team.balanceAmount, team.currency), suffix: '' },
-        {
-          label: '模型用量',
-          value: Math.round(team.totalCredits).toLocaleString(),
-          suffix: 'tokens',
-        },
-      ];
+    : isCodeBuddy
+      ? [
+          {
+            label: '总 Token',
+            value: Math.round(team.totalCredits).toLocaleString(),
+            suffix: 'tokens',
+          },
+          { label: '活跃天数', value: String(team.activeDays ?? 0), suffix: '天' },
+          { label: '当前连续', value: String(team.currentStreak ?? 0), suffix: '天' },
+        ]
+      : [
+          { label: '当月账单', value: currency(team.billAmount, team.currency), suffix: '' },
+          { label: '可用余额', value: currency(team.balanceAmount, team.currency), suffix: '' },
+          {
+            label: '模型用量',
+            value: Math.round(team.totalCredits).toLocaleString(),
+            suffix: 'tokens',
+          },
+        ];
 
   return (
     <div className="overview">
