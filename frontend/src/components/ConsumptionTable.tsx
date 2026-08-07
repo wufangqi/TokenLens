@@ -2,7 +2,12 @@ import { useShallow } from 'zustand/react/shallow';
 import { useUsageStore } from '../stores/usageStore';
 
 export function ConsumptionTable() {
+  const sourceQuery = useUsageStore((s) => s.sourceQuery);
   const rows = useUsageStore(useShallow((s) => s.payload?.data.consumption ?? []));
+
+  if (sourceQuery === 'deepseek') {
+    return <p className="empty">DeepSeek 官方 API 暂不提供按模型用量</p>;
+  }
   if (rows.length === 0) return <p className="empty">暂无模型用量</p>;
 
   const sorted = [...rows].sort((a, b) => b.credits - a.credits);

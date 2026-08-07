@@ -26,30 +26,31 @@ TokenLens 是一款轻量、隐私优先的桌面应用(macOS / Windows / Linux)
 
 ## 🚀 快速开始
 
-> 🚧 *项目开发中。安装与构建说明将在代码库落地后补充。*
+> 🚧 *Web 端 MVP 开发中。当前为前端 + 本地 Node 后端（千问 CLI / DeepSeek 余额）。*
 
 ### 环境要求
 
 - [Node.js](https://nodejs.org/)(LTS)
-- [Rust](https://www.rust-lang.org/) 工具链
-- [Tauri v2](https://tauri.app/)
+- 可选：全局安装 [`@qianwenai/qianwen-cli`](https://www.npmjs.com/package/@qianwenai/qianwen-cli) 并 `qianwen auth login`（千问真实用量）
+- 可选：设置 `DEEPSEEK_API_KEY`（DeepSeek 余额）
 
-### 安装
+### 安装与运行
 
 ```bash
 # 克隆仓库
 git clone https://github.com/wfqdreamcity/TokenLens.git
 cd TokenLens
 
-# 安装前端依赖
-npm install
+# 后端
+cd backend && npm install
+# 可选: cp .env.example .env 并填写 DEEPSEEK_API_KEY
+npm run dev   # http://localhost:5174
 
-# 开发模式运行
-npm run tauri dev
-
-# 构建生产版本
-npm run tauri build
+# 前端（另开终端）
+cd frontend && npm install && npm run dev   # http://localhost:5173
 ```
+
+看板顶栏可切换 **千问** / **DeepSeek**。DeepSeek 官方目前仅开放余额 API，无按模型用量接口。
 
 ## 🗂️ 项目结构
 

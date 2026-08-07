@@ -13,11 +13,45 @@ header.app-header {
   margin-bottom: 24px;
 }
 
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
 header.app-header h1 {
   font-size: 22px;
   letter-spacing: -0.02em;
   font-weight: 600;
 }
+
+.source-switch {
+  display: inline-flex;
+  padding: 2px;
+  background: #eef0f3;
+  border-radius: 6px;
+  gap: 2px;
+}
+
+.source-btn {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.source-btn.active {
+  background: var(--surface);
+  color: var(--text-h);
+  box-shadow: 0 1px 2px rgba(26, 29, 38, 0.08);
+}
+
 
 .statusbar {
   display: flex;

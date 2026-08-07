@@ -4,6 +4,19 @@ export interface TeamUsage {
   usedPct: number; // 0-100
   todayCredits: number;
   generation: number; // 每次数据更新递增
+  // 个人版 token-plan / DeepSeek 余额字段
+  billAmount?: number; // 当月账单金额
+  balanceAmount?: number; // 可用余额
+  currency?: string; // 如 "CNY"
+  grantedBalance?: number; // DeepSeek 赠送余额
+  toppedUpBalance?: number; // DeepSeek 充值余额
+}
+
+export interface ConsumptionRow {
+  name: string;
+  credits: number; // tokens 用量
+  cost: number; // 金额
+  pct: number; // 0-100,占总量比例
 }
 
 export interface MemberUsage {

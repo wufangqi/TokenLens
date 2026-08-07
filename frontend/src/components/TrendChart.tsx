@@ -5,10 +5,11 @@ import { useUsageStore } from '../stores/usageStore';
 
 export function TrendChart() {
   const ref = useRef<HTMLDivElement>(null);
+  const sourceQuery = useUsageStore((s) => s.sourceQuery);
   const trend = useUsageStore(useShallow((s) => s.payload?.data.trend ?? []));
 
   useEffect(() => {
-    if (!ref.current) return;
+    if (!ref.current || sourceQuery === 'deepseek') return;
     const chart = echarts.init(ref.current);
     const onResize = () => chart.resize();
     window.addEventListener('resize', onResize);
@@ -51,7 +52,11 @@ export function TrendChart() {
       window.removeEventListener('resize', onResize);
       chart.dispose();
     };
-  }, [trend]);
+  }, [trend, sourceQuery]);
+
+  if (sourceQuery === 'deepseek') {
+    return <p className="empty">DeepSeek 官方 API 暂不提供用量趋势</p>;
+  }
 
   return <div ref={ref} className="chart-host" />;
 }

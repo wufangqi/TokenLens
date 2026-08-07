@@ -3,6 +3,7 @@ import { OverviewCards } from './components/OverviewCards';
 import { TrendChart } from './components/TrendChart';
 import { ConsumptionTable } from './components/ConsumptionTable';
 import { StatusBar } from './components/StatusBar';
+import { SourceSwitch } from './components/SourceSwitch';
 import './App.css';
 
 const INTERVAL_MS = 5000;
@@ -12,7 +13,10 @@ export default function App() {
   return (
     <div className="app">
       <header className="app-header">
-        <h1>TokenLens</h1>
+        <div className="header-left">
+          <h1>TokenLens</h1>
+          <SourceSwitch />
+        </div>
         <StatusBar />
       </header>
       <OverviewCards />

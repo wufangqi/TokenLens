@@ -1,4 +1,4 @@
-import { TeamUsage, MemberUsage, ModelUsage, TrendPoint } from '../models';
+import { TeamUsage, MemberUsage, ModelUsage, TrendPoint, ConsumptionRow } from '../models';
 import { UsageProvider } from './index';
 
 const TOTAL = 250000; // 模拟标准席位 Credits 总量
@@ -23,6 +23,9 @@ export class MockProvider implements UsageProvider {
       usedPct: (total / TOTAL) * 100,
       todayCredits: 120 + (Date.now() % 80),
       generation: this.generation,
+      billAmount: 499,
+      balanceAmount: 37.01,
+      currency: 'CNY',
     };
   }
 
@@ -41,6 +44,17 @@ export class MockProvider implements UsageProvider {
     return MODELS.map((name, i) => ({
       name,
       credits: team.totalCredits * (weights[i] ?? 0),
+      pct: (weights[i] ?? 0) * 100,
+    }));
+  }
+
+  async consumption(): Promise<ConsumptionRow[]> {
+    const team = await this.teamUsage();
+    const weights = [0.5, 0.3, 0.2];
+    return MODELS.map((name, i) => ({
+      name,
+      credits: team.totalCredits * (weights[i] ?? 0),
+      cost: team.billAmount * (weights[i] ?? 0),
       pct: (weights[i] ?? 0) * 100,
     }));
   }
