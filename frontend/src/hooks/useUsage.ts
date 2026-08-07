@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { useUsageStore } from '../stores/usageStore';
-import { UsagePayload } from '../types';
+import type { UsagePayload } from '../types';
 
-const API = import.meta.env.VITE_API ?? 'http://localhost:5173/api';
+const API = import.meta.env.VITE_API ?? 'http://localhost:5174/api';
 
 export function useUsage(intervalMs: number) {
   const setPayload = useUsageStore((s) => s.setPayload);

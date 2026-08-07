@@ -6,36 +6,33 @@ import { createUsageRouter } from './routes/usage';
 import { ProviderError } from './models';
 import { UsageProvider } from './providers';
 
-const PORT = Number(process.env.PORT || 5173);
+const PORT = Number(process.env.PORT || 5174);
 
-let activeProvider: UsageProvider = new QianwenCliProvider();
-let source: 'cli' | 'mock' = 'cli';
-
-// 委托 provider:name 通过 getter 动态反映当前数据源
-const delegatingProvider: UsageProvider = {
-  get name() {
-    return source;
-  },
-  teamUsage: () => activeProvider.teamUsage(),
-  members: () => activeProvider.members(),
-  models: () => activeProvider.models(),
-  trend: (h: number) => activeProvider.trend(h),
-};
-
-// CLI 认证失效时降级到 mock
-function fallbackOnAuth(err: any, _req: any, res: any, next: any) {
-  if (err instanceof ProviderError && err.kind === 'auth') {
-    activeProvider = new MockProvider();
-    source = 'mock';
-    console.warn('[TokenLens] CLI 认证失效,已降级到 MockProvider');
+// 启动时探测 CLI 可用性:未登录或未安装则降级到 MockProvider
+async function chooseProvider(): Promise<{ provider: UsageProvider; source: string }> {
+  const cli = new QianwenCliProvider();
+  try {
+    await cli.teamUsage();
+    return { provider: cli, source: 'cli' };
+  } catch (e) {
+    if (e instanceof ProviderError && (e.kind === 'auth' || e.kind === 'cli-missing')) {
+      console.warn(`[TokenLens] ${e.message},已降级到 MockProvider`);
+    } else {
+      console.warn('[TokenLens] CLI 不可用,已降级到 MockProvider');
+    }
+    return { provider: new MockProvider(), source: 'mock' };
   }
-  next(err);
 }
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use('/api', createUsageRouter(delegatingProvider));
-app.use('/api', fallbackOnAuth);
+async function main() {
+  const { provider, source } = await chooseProvider();
+  console.log(`[TokenLens] 数据源: ${source === 'cli' ? 'CLI(真实)' : 'Mock(演示)'}`);
 
-app.listen(PORT, () => console.log(`TokenLens backend on http://localhost:${PORT}`));
+  const app = express();
+  app.use(cors());
+  app.use(express.json());
+  app.use('/api', createUsageRouter(provider));
+  app.listen(PORT, () => console.log(`TokenLens backend on http://localhost:${PORT}`));
+}
+
+main();
