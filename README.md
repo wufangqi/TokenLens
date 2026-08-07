@@ -64,11 +64,11 @@ TokenLens/
 
 ## 🔌 数据源
 
-| 数据源 | 用途 |
-| ------ | ---- |
-| 阿里云 Token Plan 团队版 | Credits 用量与额度分析 |
-| ECS Agent 观测 | 运行时指标与健康信号 |
-| 本地 AI 编程工具日志 | 会话级消耗追踪 |
+| 数据源 | 用途 | 支持平台 |
+| ------ | ---- | -------- |
+| 阿里云 Token Plan 团队版 | Credits 用量与额度分析 | [通义千问 Token Plan](https://www.qianwenai.com/benefits/tokenplan) |
+| ECS Agent 观测 | 运行时指标与健康信号 | [通义千问 Token Plan](https://www.qianwenai.com/benefits/tokenplan) |
+| 本地 AI 编程工具日志 | 会话级消耗追踪 | [通义千问 Token Plan](https://www.qianwenai.com/benefits/tokenplan) |
 
 ## 📦 导出格式
 

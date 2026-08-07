@@ -64,11 +64,11 @@ TokenLens/
 
 ## 🔌 Data Sources
 
-| Source | Purpose |
-| ------ | ------- |
-| Alibaba Cloud Token Plan Team Edition | Credits usage & quota analytics |
-| ECS Agent observability | Runtime metrics & health signals |
-| Local AI coding assistant logs | Session-level consumption tracking |
+| Source | Purpose | Supported Platform |
+| ------ | ------- | ------------------ |
+| Alibaba Cloud Token Plan Team Edition | Credits usage & quota analytics | [Qwen Token Plan](https://www.qianwenai.com/benefits/tokenplan) |
+| ECS Agent observability | Runtime metrics & health signals | [Qwen Token Plan](https://www.qianwenai.com/benefits/tokenplan) |
+| Local AI coding assistant logs | Session-level consumption tracking | [Qwen Token Plan](https://www.qianwenai.com/benefits/tokenplan) |
 
 ## 📦 Export Formats
 
