@@ -1,5 +1,7 @@
 # TokenLens
 
+> **简体中文** | [English](README.en.md)
+
 > 一款专为 AI 开发团队打造的跨平台桌面客户端——聚合 Credits 消耗、优化模型调用成本、预防额度超支。
 
 TokenLens 是一款轻量、隐私优先的桌面应用(macOS / Windows / Linux),基于 Tauri 构建。它深度对接**阿里云 Token Plan 团队版 API**,将分散在控制台、Agent 观测及本地日志中的用量数据聚合为统一的实时可视化仪表盘,帮助团队在成员、模型、会话维度精准掌控 Credits 消耗。
