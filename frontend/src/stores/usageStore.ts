@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { UsagePayload } from '../types';
+import type { UsagePayload } from '../types';
 
 interface UsageState {
   payload: UsagePayload | null;
