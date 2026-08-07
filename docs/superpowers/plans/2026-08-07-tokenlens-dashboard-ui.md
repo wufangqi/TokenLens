@@ -48,7 +48,7 @@
 
 按 design spec 设置 `--bg #F4F5F7`、`--surface #FFFFFF`、`--text`、`--text-h`、`--border`、`--accent #2F5BFF`、`--accent-soft`、`--sans` / `--mono`。去掉紫色与 `color-scheme: light dark` 强制跟随的紫暗色覆盖（可保留极简 dark 媒体查询用中性灰，或不做 dark）。页面 `background: var(--bg)`，`#root` 最小高度 100svh。
 
-- [ ] **Step 3: 提交**
+- [x] **Step 3: 提交**
 
 ```bash
 git add frontend/index.html frontend/src/index.css
@@ -64,7 +64,7 @@ git commit -m "style(frontend): set light toolbench tokens and fonts"
 - Modify: `frontend/src/App.css`
 - Delete: `frontend/src/components/ModelList.tsx`
 
-- [ ] **Step 1: 更新 App.tsx**
+- [x] **Step 1: 更新 App.tsx**
 
 移除 `ModelList` import 与渲染。结构：
 
@@ -83,13 +83,13 @@ git commit -m "style(frontend): set light toolbench tokens and fonts"
 </div>
 ```
 
-- [ ] **Step 2: 重写 App.css**
+- [x] **Step 2: 重写 App.css**
 
 实现顶栏、KPI grid、panel、table、statusbar 标签样式（见 design spec）。移动端 `.overview` / panel 单列。删除旧的 `.grid` 双列表局。
 
-- [ ] **Step 3: 删除 ModelList.tsx**
+- [x] **Step 3: 删除 ModelList.tsx**
 
-- [ ] **Step 4: 提交**
+- [x] **Step 4: 提交**
 
 ```bash
 git add frontend/src/App.tsx frontend/src/App.css
@@ -107,19 +107,19 @@ git commit -m "feat(frontend): restyle layout and drop duplicate model list"
 - Modify: `frontend/src/components/TrendChart.tsx`
 - Modify: `frontend/src/components/ConsumptionTable.tsx`
 
-- [ ] **Step 1: StatusBar**
+- [x] **Step 1: StatusBar**
 
 数据源用 `<span className="tag">CLI</span>` / `Mock`；错误用 `tag-error`。
 
-- [ ] **Step 2: OverviewCards**
+- [x] **Step 2: OverviewCards**
 
 卡片 class 用 `kpi-card`；数值 class `kpi-value`（mono）。逻辑不变。
 
-- [ ] **Step 3: TrendChart**
+- [x] **Step 3: TrendChart**
 
 ECharts：`color: ['#2F5BFF']`，网格线浅灰，tooltip 白底，areaStyle `rgba(47,91,255,0.12)`，smooth line。resize 监听可选。
 
-- [ ] **Step 4: ConsumptionTable**
+- [x] **Step 4: ConsumptionTable**
 
 - 按 `credits` 降序
 - `showCost = rows.some(r => r.cost > 0)`
@@ -127,11 +127,11 @@ ECharts：`color: ['#2F5BFF']`，网格线浅灰，tooltip 白底，areaStyle `r
 - 全 0 时脚注：`套餐抵扣，按量金额为 0`
 - 空数据：`暂无模型用量`
 
-- [ ] **Step 5: 浏览器目视验收**
+- [x] **Step 5: 浏览器目视验收**
 
 `frontend` `npm run dev`，确认：浅灰底、无紫、无右侧列表、金额列隐藏+脚注、KPI/趋势可读。
 
-- [ ] **Step 6: 提交**
+- [x] **Step 6: 提交**
 
 ```bash
 git add frontend/src/components/
@@ -142,8 +142,8 @@ git commit -m "feat(frontend): polish status, KPI, chart, and model table"
 
 ## 验收对照
 
-- [ ] 浅色工具台、钢蓝强调、无紫
-- [ ] 仅一处模型表
-- [ ] cost 全 0 无金额列 + 有脚注
-- [ ] 窄屏单列可读
-- [ ] 状态栏 CLI/Mock + 更新时间
+- [x] 浅色工具台、钢蓝强调、无紫
+- [x] 仅一处模型表
+- [x] cost 全 0 无金额列 + 有脚注
+- [x] 窄屏单列可读
+- [x] 状态栏 CLI/Mock + 更新时间
