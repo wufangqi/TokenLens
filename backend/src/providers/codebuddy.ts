@@ -54,7 +54,9 @@ export class CodeBuddyProvider implements UsageProvider {
       if (!res.ok) {
         throw new ProviderError(`CodeBuddy HTTP ${res.status}`, 'server');
       }
-      return await res.json();
+      const body = await res.json();
+      // CLI 响应常包一层 { data: ... }
+      return body?.data !== undefined ? body.data : body;
     } catch (e) {
       if (e instanceof ProviderError) throw e;
       const err = e as Error;

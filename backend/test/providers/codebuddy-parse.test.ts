@@ -26,8 +26,8 @@ const fixture = {
     },
   },
   dailyModelTokens: [
-    { date: '2026-08-01', 'gpt-5': 100, 'deepseek-v3': 50 },
-    { date: '2026-08-02', 'gpt-5': 200 },
+    { date: '2026-08-01', tokensByModel: { 'gpt-5': 100, 'deepseek-v3': 50 } },
+    { date: '2026-08-02', tokensByModel: { 'gpt-5': 200 } },
   ],
 };
 

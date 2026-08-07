@@ -10,11 +10,12 @@ export interface CodeBuddyModelUsage {
 
 export interface CodeBuddyStats {
   modelUsage?: Record<string, CodeBuddyModelUsage>;
-  dailyModelTokens?: Array<Record<string, number | string>>;
+  /** 形如 [{ date, tokensByModel: { modelId: n } }] 或扁平 { date, modelId: n } */
+  dailyModelTokens?: Array<Record<string, unknown>>;
   streaks?: { currentStreak?: number; longestStreak?: number };
   activeDays?: number;
   totalDays?: number;
-  toolUsage?: Array<{ name?: string; tool?: string; count?: number }>;
+  toolUsage?: Array<{ name?: string; tool?: string; toolName?: string; count?: number }>;
 }
 
 function modelTokens(m: CodeBuddyModelUsage): number {
@@ -67,9 +68,9 @@ export function parseCodeBuddyConsumption(stats: CodeBuddyStats): ConsumptionRow
 }
 
 /**
- * dailyModelTokens: 每日每模型 token 行。
- * 常见形态: [{ date|day: '2026-08-01', modelA: 100, modelB: 50 }, ...]
- * 或带 tokens 字段。汇总为 TrendPoint。
+ * dailyModelTokens:
+ * - [{ date, tokensByModel: { hy3: 100, ... } }]  （真实 CLI）
+ * - [{ date, hy3: 100, ... }]                     （扁平兼容）
  */
 export function parseCodeBuddyTrend(stats: CodeBuddyStats, hours: number): TrendPoint[] {
   const rows = stats.dailyModelTokens ?? [];
@@ -78,10 +79,18 @@ export function parseCodeBuddyTrend(stats: CodeBuddyStats, hours: number): Trend
     const day = String(row.date ?? row.day ?? row.period ?? '');
     if (!day) continue;
     let sum = 0;
-    for (const [k, v] of Object.entries(row)) {
-      if (k === 'date' || k === 'day' || k === 'period') continue;
-      const n = Number(v);
-      if (Number.isFinite(n)) sum += n;
+    const nested = row.tokensByModel;
+    if (nested && typeof nested === 'object' && !Array.isArray(nested)) {
+      for (const v of Object.values(nested as Record<string, unknown>)) {
+        const n = Number(v);
+        if (Number.isFinite(n)) sum += n;
+      }
+    } else {
+      for (const [k, v] of Object.entries(row)) {
+        if (k === 'date' || k === 'day' || k === 'period' || k === 'tokensByModel') continue;
+        const n = Number(v);
+        if (Number.isFinite(n)) sum += n;
+      }
     }
     byDay.set(day, (byDay.get(day) ?? 0) + sum);
   }
