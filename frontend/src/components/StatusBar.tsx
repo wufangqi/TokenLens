@@ -5,18 +5,23 @@ export function StatusBar() {
   const loading = useUsageStore((s) => s.loading);
   const error = useUsageStore((s) => s.error);
   const updated = useUsageStore((s) => s.lastUpdated);
+
+  const sourceLabel = source === 'cli' ? 'CLI' : source === 'mock' ? 'Mock' : '—';
+  const sourceClass = source === 'cli' ? 'tag' : 'tag tag-muted';
+
   return (
     <div className="statusbar">
-      <span>数据源:{source === 'cli' ? 'CLI(真实)' : 'Mock(演示)'}</span>
+      <span className={sourceClass}>{sourceLabel}</span>
       <span>
         {loading
           ? '刷新中…'
           : error
-            ? `错误:${error}`
+            ? null
             : updated
               ? `更新于 ${new Date(updated).toLocaleTimeString()}`
-              : ''}
+              : '等待数据…'}
       </span>
+      {error ? <span className="tag tag-error">错误: {error}</span> : null}
     </div>
   );
 }
