@@ -22,4 +22,23 @@ describe('MockProvider', () => {
     const sum = members.reduce((a, m) => a + m.credits, 0);
     expect(Math.abs(sum - team.totalCredits)).toBeLessThan(team.totalCredits * 0.2);
   });
+
+  it('members and team share one snapshot within a poll (exactly consistent)', async () => {
+    const p = new MockProvider();
+    const [team, members, models, consumption] = await Promise.all([
+      p.teamUsage(),
+      p.members(),
+      p.models(),
+      p.consumption(),
+    ]);
+    // members / models / consumption all derive from the same cached total,
+    // so they must add up exactly (no generation drift between calls).
+    const memberSum = members.reduce((a: number, m) => a + m.credits, 0);
+    const modelSum = models.reduce((a: number, m) => a + m.credits, 0);
+    const consumptionSum = consumption.reduce((a: number, c) => a + c.credits, 0);
+    expect(memberSum).toBeCloseTo(team.totalCredits); // weights sum to 1.0
+    expect(modelSum).toBeCloseTo(team.totalCredits);
+    expect(consumptionSum).toBeCloseTo(team.totalCredits);
+    expect(team.generation).toBe(1); // incremented once, not 4×
+  });
 });

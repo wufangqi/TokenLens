@@ -4,14 +4,21 @@ import request from 'supertest';
 import { createUsageRouter } from '../../src/routes/usage';
 import { ProviderError } from '../../src/models';
 import { DeepSeekProvider } from '../../src/providers/deepseek';
+import { CursorProvider } from '../../src/providers/cursor';
 
-function makeApp(providers: { qianwen: any; deepseek: any; codebuddy?: any }) {
+function makeApp(providers: {
+  qianwen: any;
+  deepseek: any;
+  codebuddy?: any;
+  cursor?: any;
+}) {
   const app = express();
   app.use(express.json());
   app.use(
     '/api',
     createUsageRouter({
       codebuddy: providers.codebuddy ?? { name: 'codebuddy', teamUsage: vi.fn(), ...emptyFns },
+      cursor: providers.cursor ?? { name: 'cursor', teamUsage: vi.fn(), ...emptyFns },
       ...providers,
     }),
   );
@@ -111,5 +118,42 @@ describe('usage route', () => {
     expect(res.body.source).toBe('codebuddy');
     expect(res.body.data.team.totalCredits).toBe(1800);
     expect(res.body.data.team.activeDays).toBe(12);
+  });
+
+  it('routes source=cursor to Cursor provider', async () => {
+    const qianwen = { name: 'mock', teamUsage: vi.fn(), ...emptyFns };
+    const deepseek = { name: 'deepseek', teamUsage: vi.fn(), ...emptyFns };
+    const cursor = {
+      name: 'cursor',
+      teamUsage: vi.fn().mockResolvedValue({
+        totalCredits: 0,
+        remainingCredits: 7.93,
+        usedPct: 60,
+        todayCredits: 0,
+        generation: 1,
+        billAmount: 12.07,
+        balanceAmount: 7.93,
+        planLimit: 20,
+        currency: 'USD',
+      }),
+      ...emptyFns,
+    };
+    const res = await request(makeApp({ qianwen, deepseek, cursor })).get(
+      '/api/usage?source=cursor',
+    );
+    expect(res.status).toBe(200);
+    expect(res.body.source).toBe('cursor');
+    expect(res.body.data.team.planLimit).toBeCloseTo(20);
+  });
+
+  it('returns 401 when Cursor session token missing', async () => {
+    const qianwen = { name: 'mock', teamUsage: vi.fn(), ...emptyFns };
+    const deepseek = { name: 'deepseek', teamUsage: vi.fn(), ...emptyFns };
+    const cursor = new CursorProvider({ sessionToken: '' });
+    const res = await request(makeApp({ qianwen, deepseek, cursor })).get(
+      '/api/usage?source=cursor',
+    );
+    expect(res.status).toBe(401);
+    expect(res.body.kind).toBe('auth');
   });
 });

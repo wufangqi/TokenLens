@@ -11,11 +11,21 @@ export function useUsage(intervalMs: number) {
   const setError = useUsageStore((s) => s.setError);
 
   useEffect(() => {
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | undefined;
     let cancelled = false;
+
     const fetchData = async () => {
+      // Skip work while the tab is hidden to avoid wasteful background polling.
+      if (document.hidden) {
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       try {
-        const res = await fetch(`${API}/usage?source=${sourceQuery}`);
+        const res = await fetch(`${API}/usage?source=${sourceQuery}`, {
+          signal: controller.signal,
+        });
         if (!res.ok) {
           let detail = `HTTP ${res.status}`;
           try {
@@ -28,15 +38,36 @@ export function useUsage(intervalMs: number) {
         }
         const data: UsagePayload = await res.json();
         if (!cancelled) setPayload(data);
-      } catch (e: any) {
-        if (!cancelled) setError(e.message);
+      } catch (e) {
+        if (cancelled || controller.signal.aborted) return; // superseded by a newer request
+        setError((e as Error).message);
       }
     };
-    fetchData();
-    const id = setInterval(fetchData, intervalMs);
+
+    const tick = () => {
+      fetchData().finally(() => {
+        if (!cancelled) timer = setTimeout(tick, intervalMs);
+      });
+    };
+
+    tick();
+
+    // Re-fetch immediately when the tab becomes visible again.
+    const onVisibility = () => {
+      if (!document.hidden && !cancelled) {
+        if (timer) clearTimeout(timer);
+        fetchData().finally(() => {
+          if (!cancelled) timer = setTimeout(tick, intervalMs);
+        });
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
     return () => {
       cancelled = true;
-      clearInterval(id);
+      controller.abort();
+      if (timer) clearTimeout(timer);
+      document.removeEventListener('visibilitychange', onVisibility);
     };
   }, [intervalMs, sourceQuery, setPayload, setLoading, setError]);
 }

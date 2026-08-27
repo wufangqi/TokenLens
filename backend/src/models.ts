@@ -13,6 +13,10 @@ export interface TeamUsage {
   // CodeBuddy 本地统计
   activeDays?: number;
   currentStreak?: number;
+  // Cursor Session 用量（美元）
+  planLimit?: number;
+  membershipType?: string;
+  billingCycleEnd?: string;
 }
 
 export interface ConsumptionRow {

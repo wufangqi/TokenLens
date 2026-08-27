@@ -8,6 +8,8 @@ export class DeepSeekProvider implements UsageProvider {
   private readonly apiKey: string;
   private readonly baseUrl: string;
   private readonly fetchImpl: typeof fetch;
+  private cache: { at: number; team: TeamUsage } | null = null;
+  private static readonly TTL_MS = 15_000;
 
   constructor(opts?: { apiKey?: string; baseUrl?: string; fetchImpl?: typeof fetch }) {
     this.apiKey = opts?.apiKey ?? process.env.DEEPSEEK_API_KEY ?? '';
@@ -28,6 +30,8 @@ export class DeepSeekProvider implements UsageProvider {
   }
 
   async teamUsage(): Promise<TeamUsage> {
+    const now = Date.now();
+    if (this.cache && now - this.cache.at < DeepSeekProvider.TTL_MS) return this.cache.team;
     return this.wrap(async () => {
       if (!this.apiKey) {
         throw new ProviderError('未配置 DEEPSEEK_API_KEY', 'auth');
@@ -51,7 +55,9 @@ export class DeepSeekProvider implements UsageProvider {
         }
         const raw = await res.json();
         this.generation += 1;
-        return parseDeepSeekBalance(raw, this.generation);
+        const team = parseDeepSeekBalance(raw, this.generation);
+        this.cache = { at: now, team };
+        return team;
       } finally {
         clearTimeout(timer);
       }
