@@ -6,11 +6,13 @@ export interface UsageProviderMap {
   qianwen: UsageProvider;
   deepseek: UsageProvider;
   codebuddy: UsageProvider;
+  cursor: UsageProvider;
 }
 
 function resolveSource(raw: unknown): UsageSourceQuery {
   if (raw === 'deepseek') return 'deepseek';
   if (raw === 'codebuddy') return 'codebuddy';
+  if (raw === 'cursor') return 'cursor';
   return 'qianwen';
 }
 

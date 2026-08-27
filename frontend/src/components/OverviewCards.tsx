@@ -14,6 +14,7 @@ export function OverviewCards() {
 
   const isDeepSeek = source === 'deepseek' || sourceQuery === 'deepseek';
   const isCodeBuddy = source === 'codebuddy' || sourceQuery === 'codebuddy';
+  const isCursor = source === 'cursor' || sourceQuery === 'cursor';
 
   const cards = isDeepSeek
     ? [
@@ -31,15 +32,29 @@ export function OverviewCards() {
           { label: '活跃天数', value: String(team.activeDays ?? 0), suffix: '天' },
           { label: '当前连续', value: String(team.currentStreak ?? 0), suffix: '天' },
         ]
-      : [
-          { label: '当月账单', value: currency(team.billAmount, team.currency), suffix: '' },
-          { label: '可用余额', value: currency(team.balanceAmount, team.currency), suffix: '' },
-          {
-            label: '模型用量',
-            value: Math.round(team.totalCredits).toLocaleString(),
-            suffix: 'tokens',
-          },
-        ];
+      : isCursor
+        ? [
+            { label: '已用', value: currency(team.billAmount, team.currency ?? 'USD'), suffix: '' },
+            {
+              label: '剩余',
+              value: currency(team.balanceAmount, team.currency ?? 'USD'),
+              suffix: '',
+            },
+            {
+              label: '限额',
+              value: currency(team.planLimit, team.currency ?? 'USD'),
+              suffix: '',
+            },
+          ]
+        : [
+            { label: '当月账单', value: currency(team.billAmount, team.currency), suffix: '' },
+            { label: '可用余额', value: currency(team.balanceAmount, team.currency), suffix: '' },
+            {
+              label: '模型用量',
+              value: Math.round(team.totalCredits).toLocaleString(),
+              suffix: 'tokens',
+            },
+          ];
 
   return (
     <div className="overview">

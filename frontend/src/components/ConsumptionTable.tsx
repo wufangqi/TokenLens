@@ -8,6 +8,9 @@ export function ConsumptionTable() {
   if (sourceQuery === 'deepseek') {
     return <p className="empty">DeepSeek 官方 API 暂不提供按模型用量</p>;
   }
+  if (sourceQuery === 'cursor') {
+    return <p className="empty">Cursor MVP 暂不提供按模型用量</p>;
+  }
   if (rows.length === 0) return <p className="empty">暂无模型用量</p>;
 
   const sorted = [...rows].sort((a, b) => b.credits - a.credits);

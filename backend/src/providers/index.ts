@@ -1,7 +1,7 @@
 import { TeamUsage, MemberUsage, ModelUsage, TrendPoint, ConsumptionRow } from '../models';
 
 export interface UsageProvider {
-  readonly name: 'cli' | 'mock' | 'deepseek' | 'codebuddy';
+  readonly name: 'cli' | 'mock' | 'deepseek' | 'codebuddy' | 'cursor';
   teamUsage(): Promise<TeamUsage>;
   members(): Promise<MemberUsage[]>;
   models(): Promise<ModelUsage[]>;
@@ -9,4 +9,4 @@ export interface UsageProvider {
   consumption(): Promise<ConsumptionRow[]>;
 }
 
-export type UsageSourceQuery = 'qianwen' | 'deepseek' | 'codebuddy';
+export type UsageSourceQuery = 'qianwen' | 'deepseek' | 'codebuddy' | 'cursor';

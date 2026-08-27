@@ -6,6 +6,7 @@ import { QianwenCliProvider } from './providers/qianwen-cli';
 import { MockProvider } from './providers/mock';
 import { DeepSeekProvider } from './providers/deepseek';
 import { CodeBuddyProvider } from './providers/codebuddy';
+import { CursorProvider } from './providers/cursor';
 import { createUsageRouter } from './routes/usage';
 import { ProviderError } from './models';
 import { UsageProvider } from './providers';
@@ -63,6 +64,7 @@ async function main() {
   const { provider: qianwen, source } = await chooseQianwenProvider();
   const deepseek = new DeepSeekProvider();
   const codebuddy = new CodeBuddyProvider();
+  const cursor = new CursorProvider();
   console.log(`[TokenLens] 千问数据源: ${source === 'cli' ? 'CLI(真实)' : 'Mock(演示)'}`);
   console.log(
     `[TokenLens] DeepSeek: ${process.env.DEEPSEEK_API_KEY ? '已配置 API Key' : '未配置 DEEPSEEK_API_KEY'}`,
@@ -70,12 +72,32 @@ async function main() {
   console.log(
     `[TokenLens] CodeBuddy: ${process.env.CODEBUDDY_API_BASE ?? 'http://127.0.0.1:8080'}`,
   );
+  console.log(
+    `[TokenLens] Cursor: ${process.env.CURSOR_SESSION_TOKEN ? '已配置 Session Token' : '未配置 CURSOR_SESSION_TOKEN'}`,
+  );
 
   const app = express();
   app.use(cors());
   app.use(express.json());
-  app.use('/api', createUsageRouter({ qianwen, deepseek, codebuddy }));
-  app.listen(PORT, () => console.log(`TokenLens backend on http://localhost:${PORT}`));
+  app.use('/api', createUsageRouter({ qianwen, deepseek, codebuddy, cursor }));
+  const server = app.listen(PORT, () => console.log(`TokenLens backend on http://localhost:${PORT}`));
+
+  // Graceful shutdown: stop accepting new connections, drain in-flight ones.
+  const shutdown = (sig: string) => {
+    console.log(`[TokenLens] ${sig} received, shutting down…`);
+    server.close((err) => {
+      if (err) {
+        console.error('[TokenLens] shutdown error:', err.message);
+        process.exit(1);
+      }
+      console.log('[TokenLens] closed');
+      process.exit(0);
+    });
+    // Hard stop if drain stalls beyond 5s.
+    setTimeout(() => process.exit(1), 5_000).unref();
+  };
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
 main();

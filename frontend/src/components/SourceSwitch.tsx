@@ -5,6 +5,7 @@ const OPTIONS: { id: SourceQuery; label: string }[] = [
   { id: 'qianwen', label: '千问' },
   { id: 'deepseek', label: 'DeepSeek' },
   { id: 'codebuddy', label: 'CodeBuddy' },
+  { id: 'cursor', label: 'Cursor' },
 ];
 
 export function SourceSwitch() {
